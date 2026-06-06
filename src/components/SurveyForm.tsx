@@ -138,8 +138,8 @@ export function SurveyForm() {
   const submit = async () => {
     if (!validateStep(4)) return;
     setLoading(true);
-    // Submit to local store
-    const fullData = { ...form, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+    const fallbackId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+    const fullData = { ...form, id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : fallbackId, createdAt: new Date().toISOString() };
     addResponse(fullData);
 
     // Google Sheets integration

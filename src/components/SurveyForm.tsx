@@ -10,7 +10,22 @@ const organicOptions = ['होय, पूर्णपणे सेंद्र�
 const heardOptions = ['गांडूळ खत', 'जीवामृत', 'पंचगव्य', 'ट्रायकोडर्मा', 'निंबोळी अर्क', 'दशपर्णी अर्क', 'यापैकी काहीही नाही'];
 const problemOptions = ['खते/बियांचा वाढता खर्च', 'जमिनीचा पोत खराब होणे', 'कीड आणि रोगराई', 'शेतमालाला कमी भाव', 'पाणी / सिंचनाचा प्रश्न', 'योग्य मार्गदर्शनाचा अभाव'];
 const interestOptions = ['नक्कीच होय', 'कदाचित होय', 'खात्री नाही', 'नाही'];
-const topicOptions = ['गांडूळ खत बनवणे', 'जीवामृत आणि पंचगव्य', 'दशपर्णी अर्क आणि जैविक कीटकनाशके', 'जमिनीचे आरोग्य आणि माती परीक्षण', 'सेंद्रिय प्रमाणीकरण', 'काढणीपश्चात तंत्रज्ञान आणि साठवणूक', 'शेतमालाला चांगला भाव कसा मिळवावा'];
+const topicOptions = [
+  'गांडूळ खत बनवणे', 
+  'जीवामृत आणि पंचगव्य', 
+  'दशपर्णी अर्क आणि जैविक कीटकनाशके', 
+  'जमिनीचे आरोग्य आणि माती परीक्षण', 
+  'सेंद्रिय प्रमाणीकरण', 
+  'काढणीपश्चात तंत्रज्ञान आणि साठवणूक', 
+  'शेतमालाला चांगला भाव कसा मिळवावा',
+  'मशरूम लागवड आणि प्रक्रिया',
+  'मधमाशी पालन',
+  'फळबाग आणि भाजीपाला व्यवस्थापन',
+  'दुग्ध व्यवसाय आणि कुक्कुटपालन (नोंदणीकृत)',
+  'हरितगृह (Polyhouse/Greenhouse) तंत्रज्ञान',
+  'पाणी, ठिबक सिंचन आणि जल व्यवस्थापन',
+  'शेतीतील ड्रोन व आधुनिक तंत्रज्ञान'
+];
 const dayOptions = ['सोमवार', 'मंगळवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार', 'रविवार', 'कोणताही वार'];
 const timeOptions = ['सकाळ (७-११)', 'दुपार (११-२)', 'दुपारनंतर (२-५)', 'संध्याकाळ (५-७)', 'पूर्ण दिवस'];
 const wtpOptions = ['₹० (फक्त मोफत असल्यास)', '₹५०-१००', '₹१००-२००', '₹२००-३५०', '₹३५०-५००', '₹५०० पेक्षा जास्त'];
@@ -101,6 +116,7 @@ export function SurveyForm() {
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 1) {
+      if (!form.name.trim()) newErrors.name = 'शेतकऱ्याचे नाव आवश्यक आहे';
       if (!form.village.trim()) newErrors.village = 'गाव / ग्रामपंचायत आवश्यक आहे';
       if (!form.land) newErrors.land = 'कृपया जमिनीचे क्षेत्रफळ निवडा';
       if (form.crops.length === 0) newErrors.crops = 'कृपया किमान एक पीक निवडा';
@@ -130,6 +146,10 @@ export function SurveyForm() {
           newErrors.mobile = 'कृपया १० अंकी योग्य मोबाईल नंबर प्रविष्ट करा';
         }
       }
+    }
+
+    if (currentStep === 5) {
+      // Review step, no extra validation
     }
 
     setErrors(newErrors);
@@ -192,9 +212,9 @@ export function SurveyForm() {
     setLoading(false);
     
     if (scriptUrl) {
-      showToastMsg('Success! Data saved to Google Sheets.', 'success');
+      showToastMsg('यशस्वी! माहिती Google Sheets मध्ये जतन केली.', 'success');
     } else {
-      showToastMsg('Saved locally only. Google Sheets not configured.', 'error');
+      showToastMsg('फक्त स्थानिकरित्या जतन केली. Google Sheets कॉन्फिगर केलेले नाही.', 'error');
     }
     
     setDone(true);
@@ -221,7 +241,21 @@ export function SurveyForm() {
             <CheckCircle2 className="w-8 h-8 text-brand-600" />
           </div>
           <h3 className="font-serif text-xl font-medium text-gray-900 mb-2">माहिती जतन केली!</h3>
-          <p className="text-sm text-gray-500 mb-8">Data successfully saved to Google Sheets & Dashboard.</p>
+          <p className="text-sm text-gray-500 mb-6">माहिती यशस्वीरित्या जतन केली.</p>
+          
+          <div className="mb-8 flex flex-col items-center p-5 md:p-6 bg-[#25D366]/5 rounded-2xl border border-[#25D366]/20 max-w-md mx-auto">
+            <p className="text-sm md:text-base text-gray-800 mb-3 font-medium">आमच्या व्हॉट्सॲप चॅनेलमध्ये सामील व्हा:</p>
+            <a 
+              href="https://whatsapp.com/channel/0029Vb8Gdr49mrGlRkGAdw0U" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-left gap-3 px-5 py-3 md:py-4 bg-[#25D366] text-white rounded-xl text-sm font-medium hover:bg-[#20bd5a] transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <span className="text-xl">👥</span>
+              <span>प्रगतीशील शेतकरी समूह By BVFPC LTD 🚜</span>
+            </a>
+          </div>
+
           <button 
             onClick={() => {
               setForm({
@@ -234,13 +268,13 @@ export function SurveyForm() {
             }}
             className="px-6 py-2.5 bg-brand-900 text-white rounded-xl text-sm font-medium hover:bg-brand-800 transition-colors"
           >
-            नवीन फॉर्म भरा (Add Another)
+            नवीन फॉर्म भरा
           </button>
         </div>
       ) : (
         <div className="bg-white md:rounded-[2rem] sm:border border-gray-100 sm:shadow-sm relative overflow-hidden sm:p-8 md:p-12 -mx-5 px-5 sm:mx-0">
           <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-100">
-            <div className="h-full bg-brand-500 transition-all duration-500 ease-out" style={{ width: `${(step / 4) * 100}%` }} />
+            <div className="h-full bg-brand-500 transition-all duration-500 ease-out" style={{ width: `${(step / 5) * 100}%` }} />
           </div>
 
       {!scriptUrl && (
@@ -255,21 +289,21 @@ export function SurveyForm() {
 
       <div className="flex items-center gap-3 mb-8 pt-4">
         <div className="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs"><Anchor className="w-4 h-4"/></div>
-        <span className="text-sm font-semibold tracking-widest uppercase text-gray-400">Step {step} of 4</span>
+        <span className="text-sm font-semibold tracking-widest uppercase text-gray-400">टप्पा {step} / ५</span>
       </div>
 
       <div className="space-y-8 min-h-[350px]">
         {step === 1 && (
           <div className="animation-fade-in space-y-8">
-            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">वैयक्तिक माहिती (Background)</h2>
+            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">वैयक्तिक माहिती</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
               <div>
-                <label className="block text-base sm:text-sm font-medium text-gray-700 mb-2">१. शेतकऱ्याचे नाव <span className="text-gray-400 font-normal">(पर्यायी)</span></label>
-                <input type="text" value={form.name} onChange={e => update('name', e.target.value)} className="w-full border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 sm:py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all" placeholder="Farmer Name" />
+                <label className="block text-base sm:text-sm font-medium text-gray-700 mb-2">१. शेतकऱ्याचे नाव <span className="text-red-500">*</span></label>
+                <input type="text" value={form.name} onChange={e => update('name', e.target.value)} className={cn("w-full border bg-gray-50 rounded-xl px-4 py-3 sm:py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all", errors.name ? "border-red-300 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200")} placeholder="शेतकऱ्याचे नाव" />
               </div>
               <div>
                 <label className="block text-base sm:text-sm font-medium text-gray-700 mb-2">२. गाव / ग्रामपंचायत <span className="text-red-500">*</span></label>
-                <input type="text" value={form.village} onChange={e => update('village', e.target.value)} className={cn("w-full border bg-gray-50 rounded-xl px-4 py-3 sm:py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all", errors.village ? "border-red-300 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200")} placeholder="Village" />
+                <input type="text" value={form.village} onChange={e => update('village', e.target.value)} className={cn("w-full border bg-gray-50 rounded-xl px-4 py-3 sm:py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all", errors.village ? "border-red-300 focus:border-red-500 focus:ring-red-500/20" : "border-gray-200")} placeholder="गाव / ग्रामपंचायत" />
                 <ErrorMessage message={errors.village} />
               </div>
             </div>
@@ -293,7 +327,7 @@ export function SurveyForm() {
 
         {step === 2 && (
           <div className="animation-fade-in space-y-8">
-            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">शेतीची सद्यस्थिती (Practices)</h2>
+            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">शेतीची सद्यस्थिती</h2>
             <div>
               <label className="block text-base sm:text-sm font-medium text-gray-700">६. आपण सध्या सेंद्रिय खते/औषधे वापरता का? <span className="text-red-500">*</span></label>
               <Pills options={organicOptions} selected={form.organic} onChange={(v) => update('organic', v)} hasError={!!errors.organic} />
@@ -314,7 +348,7 @@ export function SurveyForm() {
 
         {step === 3 && (
           <div className="animation-fade-in space-y-8">
-            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">प्रशिक्षण आवड (Training Interest)</h2>
+            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">प्रशिक्षण आवड</h2>
             <div>
               <label className="block text-base sm:text-sm font-medium text-gray-700">९. आपण BRC च्या प्रशिक्षण शिबिरात सहभागी होण्यास उत्सुक आहात का? <span className="text-red-500">*</span></label>
               <Pills options={interestOptions} selected={form.interest} onChange={(v) => update('interest', v)} hasError={!!errors.interest} />
@@ -340,7 +374,7 @@ export function SurveyForm() {
 
         {step === 4 && (
           <div className="animation-fade-in space-y-8">
-            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">फी आणि इतर (Commitment)</h2>
+            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950">फी आणि इतर</h2>
             <div>
               <label className="block text-base sm:text-sm font-medium text-gray-700">१३. पूर्ण दिवसाच्या प्रात्यक्षिकासह प्रशिक्षणासाठी आपण किती फी देऊ शकता? <span className="text-red-500">*</span></label>
               <p className="text-sm sm:text-xs text-gray-500 mb-3 mt-1">६ तास, चहा-नाश्ता, प्रमाणपत्र आणि मोफत सॅम्पल सोबत</p>
@@ -359,7 +393,7 @@ export function SurveyForm() {
             </div>
             <div>
               <label className="block text-base sm:text-sm font-medium text-gray-700 mb-2">१६. तुमची काही सूचना किंवा प्रश्न? (पर्यायी)</label>
-              <textarea value={form.comments} onChange={e => update('comments', e.target.value)} rows={2} className="w-full resize-none border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 sm:py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all" placeholder="Any suggestions..." />
+              <textarea value={form.comments} onChange={e => update('comments', e.target.value)} rows={2} className="w-full resize-none border border-gray-200 bg-gray-50 rounded-xl px-4 py-3 sm:py-3 text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all" placeholder="तुमची सूचना येथे लिहा..." />
             </div>
             
             <div className="bg-brand-50 p-5 md:p-6 rounded-[1.5rem] border border-brand-100">
@@ -382,21 +416,58 @@ export function SurveyForm() {
             </div>
           </div>
         )}
+
+        {step === 5 && (
+          <div className="animation-fade-in space-y-6">
+            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-brand-950 mb-2">सारांश</h2>
+            <p className="text-gray-500 text-sm mb-6">कृपया माहिती जतन करण्यापूर्वी खालील तपशील तपासा.</p>
+            <div className="bg-gray-50/50 rounded-xl border border-gray-100 p-6 space-y-4">
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">नाव:</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2">{form.name || '-'}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">गाव/ग्रामपंचायत:</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2">{form.village || '-'}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">शेती (एकर):</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2">{form.land || '-'}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">पिके:</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2">{form.crops.join(', ') || '-'}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">सेंद्रिय वापर:</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2 max-w-[60%]">{form.organic || '-'}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">प्रशिक्षण विषय:</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2 max-w-[60%]">{form.topics.join(', ') || '-'}</span>
+               </div>
+               <div className="flex justify-between border-b border-gray-100 pb-3">
+                 <span className="text-gray-500 text-sm">मोबाईल नंबर:</span>
+                 <span className="text-brand-900 font-medium text-sm text-right px-2">{form.mobile || '-'}</span>
+               </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-3 justify-end mt-10 border-t border-gray-100 pt-8">
         {step > 1 && (
           <button onClick={() => setStep(s => s - 1)} className="px-5 py-3 sm:py-2.5 rounded-xl text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors active:scale-95">
-            मागे (Back)
+            मागे
           </button>
         )}
-        {step < 4 ? (
+        {step < 5 ? (
           <button onClick={handleNext} className="px-6 py-3 sm:py-2.5 rounded-xl text-sm font-medium text-white bg-brand-900 hover:bg-brand-800 transition-colors shadow-sm active:scale-95">
-            पुढे (Next)
+            पुढे
           </button>
         ) : (
           <button onClick={submit} disabled={loading} className="px-8 py-3 sm:py-2.5 rounded-xl text-sm font-medium text-white bg-brand-700 hover:bg-brand-600 transition-colors shadow-sm active:scale-95 min-w-[120px] flex justify-center items-center">
-            {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "जतन करा (Submit)"}
+            {loading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "जतन करा"}
           </button>
         )}
       </div>

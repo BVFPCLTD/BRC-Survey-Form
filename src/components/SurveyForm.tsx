@@ -155,7 +155,22 @@ export function SurveyForm() {
       try {
         const formBody = new URLSearchParams();
         Object.entries(fullData).forEach(([k, v]) => {
-          formBody.append(k, Array.isArray(v) ? v.join(', ') : (v as string));
+          let stringValue = Array.isArray(v) ? v.join(', ') : String(v || '');
+          
+          // Format mobile number for Sheets and prevent formula error by prepending apostrophe
+          if (k === 'mobile' && stringValue) {
+             const digits = stringValue.replace(/\D/g, '');
+             if (digits.startsWith('91') && digits.length > 2) {
+                 const local = digits.substring(2);
+                 stringValue = `+91 ${local.slice(0,5)} ${local.slice(5)}`.trim();
+             }
+          }
+          
+          if (stringValue.startsWith('+') || stringValue.startsWith('=')) {
+             stringValue = `'${stringValue}`;
+          }
+          
+          formBody.append(k, stringValue);
         });
         
         await fetch(scriptUrl, { 
@@ -351,10 +366,17 @@ export function SurveyForm() {
               <label className="block text-base sm:text-sm font-medium text-brand-900 mb-3">१७. संपर्कासाठी मोबाईल नंबर <span className="font-normal opacity-70">(पर्यायी)</span></label>
               <div className={cn("flex bg-white rounded-xl overflow-hidden border transition-all", errors.mobile ? "border-red-400 ring-1 ring-red-400" : "border-gray-200 focus-within:border-brand-400 focus-within:ring-1 focus-within:ring-brand-400")}>
                 <span className="flex items-center justify-center pl-4 pr-3 py-3 sm:py-3 text-base sm:text-sm font-mono text-gray-500 bg-gray-50/50 border-r border-gray-200 select-none">+91</span>
-                <input type="tel" value={form.mobile.replace(/^\+91\s*/, '')} onChange={e => {
-                  const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                  update('mobile', val ? '+91 ' + val : '');
-                }} className="w-full px-3 py-3 sm:py-3 text-base sm:text-sm focus:outline-none font-mono" placeholder="९८७६५४३२१०" />
+                <input 
+                  type="text" 
+                  inputMode="numeric"
+                  value={form.mobile.replace(/^\+91\s*/, '').replace(/(\d{5})(?=\d)/g, '$1 ').trim()} 
+                  onChange={e => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                    update('mobile', val ? '+91 ' + val : '');
+                  }} 
+                  className="w-full px-3 py-3 sm:py-3 text-base sm:text-sm focus:outline-none font-mono" 
+                  placeholder="98765 43210" 
+                />
               </div>
               <ErrorMessage message={errors.mobile} />
             </div>

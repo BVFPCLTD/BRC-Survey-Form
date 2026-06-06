@@ -67,6 +67,14 @@ export function SurveyForm() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; type: 'success' | 'error'; message: string }>({ show: false, type: 'success', message: '' });
+
+  const showToastMsg = (msg: string, type: 'success' | 'error' = 'success') => {
+    setToast({ show: true, type, message: msg });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 4000);
+  };
   
   const scriptUrl = import.meta.env.VITE_GOOGLE_SHEETS_URL;
 
@@ -167,40 +175,58 @@ export function SurveyForm() {
     }
     
     setLoading(false);
+    
+    if (scriptUrl) {
+      showToastMsg('Success! Data saved to Google Sheets.', 'success');
+    } else {
+      showToastMsg('Saved locally only. Google Sheets not configured.', 'error');
+    }
+    
     setDone(true);
   };
 
-  if (done) {
-    return (
-      <div className="text-center py-16 animation-fade-in">
-        <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-8 h-8 text-brand-600" />
-        </div>
-        <h3 className="font-serif text-xl font-medium text-gray-900 mb-2">माहिती जतन केली!</h3>
-        <p className="text-sm text-gray-500 mb-8">Data successfully saved to Google Sheets & Dashboard.</p>
-        <button 
-          onClick={() => {
-            setForm({
-              name: '', village: '', land: '', crops: [], member: '', organic: '', heard: [], problem: '',
-              interest: '', topics: [], day: '', time: '', wtp: '', buyinput: '', refer: '', comments: '', mobile: ''
-            });
-            setErrors({});
-            setStep(1);
-            setDone(false);
-          }}
-          className="px-6 py-2.5 bg-brand-900 text-white rounded-xl text-sm font-medium hover:bg-brand-800 transition-colors"
-        >
-          नवीन फॉर्म भरा (Add Another)
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white md:rounded-[2rem] sm:border border-gray-100 sm:shadow-sm relative overflow-hidden sm:p-8 md:p-12 -mx-5 px-5 sm:mx-0">
-      <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-100">
-        <div className="h-full bg-brand-500 transition-all duration-500 ease-out" style={{ width: `${(step / 4) * 100}%` }} />
+    <>
+      <div className={cn(
+        "fixed top-4 right-4 z-50 transition-all duration-300 transform",
+        toast.show ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0 pointer-events-none"
+      )}>
+        <div className={cn(
+          "flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg border",
+          toast.type === 'success' ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+        )}>
+          {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          <span className="text-sm font-medium">{toast.message}</span>
+        </div>
       </div>
+
+      {done ? (
+        <div className="bg-white md:rounded-[2rem] sm:border border-gray-100 sm:shadow-sm sm:p-8 md:p-12 -mx-5 px-5 sm:mx-0 text-center py-16 animation-fade-in">
+          <div className="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-8 h-8 text-brand-600" />
+          </div>
+          <h3 className="font-serif text-xl font-medium text-gray-900 mb-2">माहिती जतन केली!</h3>
+          <p className="text-sm text-gray-500 mb-8">Data successfully saved to Google Sheets & Dashboard.</p>
+          <button 
+            onClick={() => {
+              setForm({
+                name: '', village: '', land: '', crops: [], member: '', organic: '', heard: [], problem: '',
+                interest: '', topics: [], day: '', time: '', wtp: '', buyinput: '', refer: '', comments: '', mobile: ''
+              });
+              setErrors({});
+              setStep(1);
+              setDone(false);
+            }}
+            className="px-6 py-2.5 bg-brand-900 text-white rounded-xl text-sm font-medium hover:bg-brand-800 transition-colors"
+          >
+            नवीन फॉर्म भरा (Add Another)
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white md:rounded-[2rem] sm:border border-gray-100 sm:shadow-sm relative overflow-hidden sm:p-8 md:p-12 -mx-5 px-5 sm:mx-0">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-100">
+            <div className="h-full bg-brand-500 transition-all duration-500 ease-out" style={{ width: `${(step / 4) * 100}%` }} />
+          </div>
 
       {!scriptUrl && (
         <div className="my-4 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
@@ -353,5 +379,7 @@ export function SurveyForm() {
         )}
       </div>
     </div>
+        )}
+    </>
   );
 }
